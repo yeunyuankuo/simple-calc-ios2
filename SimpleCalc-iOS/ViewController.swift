@@ -23,7 +23,7 @@ class ViewController: UIViewController {
     var operation: String = ""
     var num1: Double = 0
     var numbers: [Double] = []
-    //var stateRNP = false
+    //var stateRPN = false
     var equals = false
     var stateOp = false
     
@@ -85,8 +85,8 @@ class ViewController: UIViewController {
         case "/":
             self.operation = "/"
         case "%":
-            //self.operation = "%"
-            self.display.text = "\(num1 * 0.01)"
+            self.operation = "%"
+            //self.display.text = "\(num1 * 0.01)"
         case "=":
             equals = true
             let num2 = Double(self.display.text!)!
@@ -100,6 +100,9 @@ class ViewController: UIViewController {
                 result = num1 * num2
             case "/":
                 result = num1 / num2
+            case "%":
+                //result = num1 % num2
+                result = num1.truncatingRemainder(dividingBy: num2)
             case "Count":
                 numbers.append(num2)
                 result = Double(numbers.count)
@@ -149,8 +152,8 @@ class ViewController: UIViewController {
             operation = ""
             self.display.text! = "0"
         
-//        case "RNP":
-//            stateRNP = true
+//        case "RPN":
+//            stateRPN = true
             
         default:
             break

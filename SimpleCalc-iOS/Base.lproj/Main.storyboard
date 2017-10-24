@@ -221,7 +221,7 @@
                                 <rect key="frame" x="135" y="192" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <state key="normal" title="RNP"/>
+                                <state key="normal" title="RPN"/>
                                 <connections>
                                     <action selector="operationSelectedWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hl0-OP-An5"/>
                                 </connections>
