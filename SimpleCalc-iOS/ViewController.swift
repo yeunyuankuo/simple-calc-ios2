@@ -23,22 +23,26 @@ class ViewController: UIViewController {
     var operation: String = ""
     var num1: Double = 0
     var numbers: [Double] = []
-    //var stateRPN = false
+    var numbersRPN: [Double] = []
+    var stateRPN = false
+    var enter = false
     var equals = false
     var stateOp = false
     
+    @IBOutlet weak var buttonRPN: UILabel!
     @IBOutlet weak var display: UILabel!
     @IBAction func numbersSelected(sender: UIButton) {
-        if (display.text! == "0") {
-            display.text = ""
-        }
-        if (equals == true) {
+        if (equals) {
             display.text = ""
             equals = false
         }
-        if (stateOp == true) {
+        if (stateOp) {
             display.text = ""
             stateOp = false
+        }
+        if (enter) {
+            display.text = ""
+            enter = false
         }
         switch sender.titleLabel!.text! {
         case ".":
@@ -46,24 +50,53 @@ class ViewController: UIViewController {
                 self.display.text! += "."
             }
         case "0":
-            self.display.text! += "0"
+            if (self.display.text! != "0") {
+                self.display.text! += "0"
+            }
         case "1":
+            if (display.text! == "0") {
+                display.text = ""
+            }
             self.display.text! += "1"
         case "2":
+            if (display.text! == "0") {
+                display.text = ""
+            }
             self.display.text! += "2"
         case "3":
+            if (display.text! == "0") {
+                display.text = ""
+            }
             self.display.text! += "3"
         case "4":
+            if (display.text! == "0") {
+                display.text = ""
+            }
             self.display.text! += "4"
         case "5":
+            if (display.text! == "0") {
+                display.text = ""
+            }
             self.display.text! += "5"
         case "6":
+            if (display.text! == "0") {
+                display.text = ""
+            }
             self.display.text! += "6"
         case "7":
+            if (display.text! == "0") {
+                display.text = ""
+            }
             self.display.text! += "7"
         case "8":
+            if (display.text! == "0") {
+                display.text = ""
+            }
             self.display.text! += "8"
         case "9":
+            if (display.text! == "0") {
+                display.text = ""
+            }
             self.display.text! += "9"
         default:
             break
@@ -71,22 +104,86 @@ class ViewController: UIViewController {
     }
     
     @IBAction func operationSelected(sender: UIButton) {
-        if (sender.titleLabel!.text! != "=") {
+        if (sender.titleLabel!.text! != "=" && sender.titleLabel!.text! != "RPN" && sender.titleLabel!.text! != "Enter") {
             num1 = Double(self.display.text!)!
             stateOp = true
         }
         switch (sender.titleLabel!.text!) {
         case "+":
-            self.operation = "+"
+            if (stateRPN) {
+                let num2 = Double(self.display.text!)!
+                let result = numbersRPN[0] + num2
+                let isInteger = floor(result) == result
+                if (isInteger) {
+                    self.display.text! = ("\(Int(result))")
+                } else {
+                    self.display.text! = ("\(result)")
+                }
+                numbersRPN = []
+                enter = false
+            } else {
+                self.operation = "+"
+            }
         case "-":
-            self.operation = "-"
+            if (stateRPN) {
+                let num2 = Double(self.display.text!)!
+                let result = numbersRPN[0] - num2
+                let isInteger = floor(result) == result
+                if (isInteger) {
+                    self.display.text! = ("\(Int(result))")
+                } else {
+                    self.display.text! = ("\(result)")
+                }
+                numbersRPN = []
+                enter = false
+            } else {
+                self.operation = "-"
+            }
         case "*":
-            self.operation = "*"
+            if (stateRPN) {
+                let num2 = Double(self.display.text!)!
+                let result = numbersRPN[0] * num2
+                let isInteger = floor(result) == result
+                if (isInteger) {
+                    self.display.text! = ("\(Int(result))")
+                } else {
+                    self.display.text! = ("\(result)")
+                }
+                numbersRPN = []
+                enter = false
+            } else {
+                self.operation = "*"
+            }
         case "/":
-            self.operation = "/"
+            if (stateRPN) {
+                let num2 = Double(self.display.text!)!
+                let result = numbersRPN[0] / num2
+                let isInteger = floor(result) == result
+                if (isInteger) {
+                    self.display.text! = ("\(Int(result))")
+                } else {
+                    self.display.text! = ("\(result)")
+                }
+                numbersRPN = []
+                enter = false
+            } else {
+                self.operation = "/"
+            }
         case "%":
-            self.operation = "%"
-            //self.display.text = "\(num1 * 0.01)"
+            if (stateRPN) {
+                let num2 = Double(self.display.text!)!
+                let result = numbersRPN[0].truncatingRemainder(dividingBy: num2)
+                let isInteger = floor(result) == result
+                if (isInteger) {
+                    self.display.text! = ("\(Int(result))")
+                } else {
+                    self.display.text! = ("\(result)")
+                }
+                numbersRPN = []
+                enter = false
+            } else {
+                self.operation = "%"
+            }
         case "=":
             equals = true
             let num2 = Double(self.display.text!)!
@@ -101,7 +198,6 @@ class ViewController: UIViewController {
             case "/":
                 result = num1 / num2
             case "%":
-                //result = num1 % num2
                 result = num1.truncatingRemainder(dividingBy: num2)
             case "Count":
                 numbers.append(num2)
@@ -127,33 +223,77 @@ class ViewController: UIViewController {
             }
             
         case "Fact.":
-            let result = factorial(num: Double(self.display.text!)!)
-            let isInteger = floor(result) == result
-            if (isInteger) {
+            if (floor(Double(self.display.text!)!) == Double(self.display.text!)!) {
+                let result = factorial(num: Double(self.display.text!)!)
                 self.display.text! = ("\(Int(result))")
             } else {
-                self.display.text! = ("\(result)")
+                self.display.text! = ("0")
             }
+            numbers = []
             num1 = 0
             
         case "Count":
-            operation = "Count"
-            numbers.append(num1)
-            num1 = 0
-
+            if (stateRPN) {
+                let num2 = Double(self.display.text!)!
+                numbersRPN.append(num2)
+                let result = numbersRPN.count
+                self.display.text! = ("\(result)")
+                numbersRPN = []
+                enter = false
+            } else {
+                operation = "Count"
+                numbers.append(num1)
+                num1 = 0
+            }
         case "Avg.":
-            operation = "Avg."
-            numbers.append(num1)
-            num1 = 0
-            
+            if (stateRPN) {
+                let num2 = Double(self.display.text!)!
+                numbersRPN.append(num2)
+                var total: Double = 0
+                for n in numbersRPN {
+                    total += n
+                }
+                let result = total / Double(numbersRPN.count)
+                let isInteger = floor(result) == result
+                if (isInteger) {
+                    self.display.text! = ("\(Int(result))")
+                } else {
+                    self.display.text! = ("\(result)")
+                }
+                numbersRPN = []
+                enter = false
+            } else {
+                operation = "Avg."
+                numbers.append(num1)
+                num1 = 0
+            }
         case "AC":
             numbers = []
+            numbersRPN = []
             num1 = 0
             operation = ""
             self.display.text! = "0"
+            buttonRPN.text = ""
+            stateRPN = false
+            enter = false
         
-//        case "RPN":
-//            stateRPN = true
+        case "RPN":
+            if (stateRPN) {
+                stateRPN = false
+                enter = false
+                buttonRPN.text = ""
+            } else {
+                stateRPN = true
+                buttonRPN.text = "RPN"
+                self.display.text = "0"
+            }
+            
+        case "Enter":
+            if (stateRPN) {
+                let num = Double(self.display.text!)!
+                numbersRPN.append(num)
+                enter = true
+            }
             
         default:
             break
@@ -167,7 +307,6 @@ class ViewController: UIViewController {
             return num * factorial(num: num - 1)
         }
     }
-    
     
 }
 
