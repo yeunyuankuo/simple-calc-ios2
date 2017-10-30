@@ -29,8 +29,19 @@ class ViewController: UIViewController {
     var equals = false
     var stateOp = false
     
+    var currentStep: String = ""
+    var history = [String]()
+    
     @IBOutlet weak var buttonRPN: UILabel!
     @IBOutlet weak var display: UILabel!
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier! == "historySegue") {
+            let dest = segue.destination as! SecondViewController
+            dest.history = self.history
+        }
+    }
+
     @IBAction func numbersSelected(sender: UIButton) {
         if (equals) {
             display.text = ""
@@ -47,9 +58,11 @@ class ViewController: UIViewController {
         switch sender.titleLabel!.text! {
         case ".":
             if (self.display.text!.range(of: ".") == nil) {
+                currentStep += "."
                 self.display.text! += "."
             }
         case "0":
+            currentStep += "0"
             if (self.display.text! != "0") {
                 self.display.text! += "0"
             }
@@ -58,46 +71,55 @@ class ViewController: UIViewController {
                 display.text = ""
             }
             self.display.text! += "1"
+            currentStep += "1"
         case "2":
             if (display.text! == "0") {
                 display.text = ""
             }
             self.display.text! += "2"
+            currentStep += "2"
         case "3":
             if (display.text! == "0") {
                 display.text = ""
             }
             self.display.text! += "3"
+            currentStep += "3"
         case "4":
             if (display.text! == "0") {
                 display.text = ""
             }
             self.display.text! += "4"
+            currentStep += "4"
         case "5":
             if (display.text! == "0") {
                 display.text = ""
             }
             self.display.text! += "5"
+            currentStep += "5"
         case "6":
             if (display.text! == "0") {
                 display.text = ""
             }
             self.display.text! += "6"
+            currentStep += "6"
         case "7":
             if (display.text! == "0") {
                 display.text = ""
             }
             self.display.text! += "7"
+            currentStep += "7"
         case "8":
             if (display.text! == "0") {
                 display.text = ""
             }
             self.display.text! += "8"
+            currentStep += "8"
         case "9":
             if (display.text! == "0") {
                 display.text = ""
             }
             self.display.text! += "9"
+            currentStep += "9"
         default:
             break
         }
@@ -116,13 +138,20 @@ class ViewController: UIViewController {
                 let isInteger = floor(result) == result
                 if (isInteger) {
                     self.display.text! = ("\(Int(result))")
+                    currentStep += " + => \(Int(result))"
+                    history.append(currentStep)
+                    currentStep = ""
                 } else {
                     self.display.text! = ("\(result)")
+                    currentStep += " + => \(result)"
+                    history.append(currentStep)
+                    currentStep = ""
                 }
                 numbersRPN = []
                 enter = false
             } else {
                 self.operation = "+"
+                currentStep += " + "
             }
         case "-":
             if (stateRPN) {
@@ -131,28 +160,42 @@ class ViewController: UIViewController {
                 let isInteger = floor(result) == result
                 if (isInteger) {
                     self.display.text! = ("\(Int(result))")
+                    currentStep += " - => \(Int(result))"
+                    history.append(currentStep)
+                    currentStep = ""
                 } else {
                     self.display.text! = ("\(result)")
+                    currentStep += " - => \(result)"
+                    history.append(currentStep)
+                    currentStep = ""
                 }
                 numbersRPN = []
                 enter = false
             } else {
                 self.operation = "-"
+                currentStep += " - "
             }
-        case "*":
+        case "x":
             if (stateRPN) {
                 let num2 = Double(self.display.text!)!
                 let result = numbersRPN[0] * num2
                 let isInteger = floor(result) == result
                 if (isInteger) {
                     self.display.text! = ("\(Int(result))")
+                    currentStep += " x => \(Int(result))"
+                    history.append(currentStep)
+                    currentStep = ""
                 } else {
                     self.display.text! = ("\(result)")
+                    currentStep += " x => \(result)"
+                    history.append(currentStep)
+                    currentStep = ""
                 }
                 numbersRPN = []
                 enter = false
             } else {
-                self.operation = "*"
+                self.operation = "x"
+                currentStep += " x "
             }
         case "/":
             if (stateRPN) {
@@ -161,13 +204,20 @@ class ViewController: UIViewController {
                 let isInteger = floor(result) == result
                 if (isInteger) {
                     self.display.text! = ("\(Int(result))")
+                    currentStep += " / => \(Int(result))"
+                    history.append(currentStep)
+                    currentStep = ""
                 } else {
                     self.display.text! = ("\(result)")
+                    currentStep += " / => \(result)"
+                    history.append(currentStep)
+                    currentStep = ""
                 }
                 numbersRPN = []
                 enter = false
             } else {
                 self.operation = "/"
+                currentStep += " / "
             }
         case "%":
             if (stateRPN) {
@@ -176,13 +226,20 @@ class ViewController: UIViewController {
                 let isInteger = floor(result) == result
                 if (isInteger) {
                     self.display.text! = ("\(Int(result))")
+                    currentStep += " % => \(Int(result))"
+                    history.append(currentStep)
+                    currentStep = ""
                 } else {
                     self.display.text! = ("\(result)")
+                    currentStep += " % => \(result)"
+                    history.append(currentStep)
+                    currentStep = ""
                 }
                 numbersRPN = []
                 enter = false
             } else {
                 self.operation = "%"
+                currentStep += " % "
             }
         case "=":
             equals = true
@@ -193,7 +250,7 @@ class ViewController: UIViewController {
                 result = num1 + num2
             case "-":
                 result = num1 - num2
-            case "*":
+            case "x":
                 result = num1 * num2
             case "/":
                 result = num1 / num2
@@ -218,16 +275,26 @@ class ViewController: UIViewController {
             let isInteger = floor(result) == result
             if (isInteger) {
                 self.display.text! = ("\(Int(result))")
+                currentStep += " = \(Int(result))"
+                history.append(currentStep)
+                currentStep = ""
             } else {
                 self.display.text! = ("\(result)")
+                currentStep += " = \(result)"
+                history.append(currentStep)
+                currentStep = ""
             }
             
         case "Fact.":
             if (floor(Double(self.display.text!)!) == Double(self.display.text!)!) {
                 let result = factorial(num: Double(self.display.text!)!)
                 self.display.text! = ("\(Int(result))")
+                currentStep += "Fact. = \(Int(result))"
+                history.append(currentStep)
+                currentStep = ""
             } else {
                 self.display.text! = ("0")
+                currentStep += "Fact. = 0"
             }
             numbers = []
             num1 = 0
@@ -238,10 +305,14 @@ class ViewController: UIViewController {
                 numbersRPN.append(num2)
                 let result = numbersRPN.count
                 self.display.text! = ("\(result)")
+                currentStep += " Count = \(result)"
+                history.append(currentStep)
+                currentStep = ""
                 numbersRPN = []
                 enter = false
             } else {
                 operation = "Count"
+                currentStep += " Count "
                 numbers.append(num1)
                 num1 = 0
             }
@@ -257,13 +328,20 @@ class ViewController: UIViewController {
                 let isInteger = floor(result) == result
                 if (isInteger) {
                     self.display.text! = ("\(Int(result))")
+                    currentStep += " Avg. = \(Int(result))"
+                    history.append(currentStep)
+                    currentStep = ""
                 } else {
                     self.display.text! = ("\(result)")
+                    currentStep += " Avg. = \(result)"
+                    history.append(currentStep)
+                    currentStep = ""
                 }
                 numbersRPN = []
                 enter = false
             } else {
                 operation = "Avg."
+                currentStep += " Avg. "
                 numbers.append(num1)
                 num1 = 0
             }
@@ -293,6 +371,14 @@ class ViewController: UIViewController {
                 let num = Double(self.display.text!)!
                 numbersRPN.append(num)
                 enter = true
+                let isInteger = floor(num) == num
+                if (isInteger) {
+                    //currentStep += "\(Int(num)) "
+                    currentStep += " "
+                } else {
+                    //currentStep += "\(num) "
+                    currentStep += " "
+                }
             }
             
         default:
